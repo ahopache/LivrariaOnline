@@ -1,0 +1,60 @@
+## Configurações iniciais
+
+### É necessario instalar os pacotes:
+#### - flask
+#### - pandas
+
+Para facilitar, deixei arquivos de configurações com os comandos para instalar os pacotes.
+Um para se estiver no Linux: configLinux.sh
+Outro se tiver no Windows: configWindows.bat
+
+## O servidor é iniciado pelo arquivo __main__.py
+
+### Ao iniciar o servidor, já é criado as bases de livros e de usuários.
+Seguem usuarios:
+id | login | senha
+1  | Assis | 123
+2  | Joao  | 123
+
+A base de livros é carregada com a 1a página de livros de Machado de Assis.
+Obtida no site Open Library (https://openlibrary.org).
+E os livros de IDs 1 a 10 foram marcados como emprestados, com data de emprestimo em ordem decrescente.
+
+Para armazenar os dados foi utilizado um banco chave-valor simples salvo em CSV, e
+desenvolvido uma interface para fácilitar futura migração para outro banco.
+O banco mockado está em: src\main\python\LivrariaOnline\server\MockDatabase.py
+
+### Para uma futura migração de banco
+(1) Deve ser criado um novo arquivo com os dados do banco, seguindo o layout padrão definido na interface
+src\main\python\webAPI\server\Database.py
+(2) No arquivo de interface:
+  (2.1) alterar o import para o novo arquivo e
+  (2.2) a classe carregada no método __init__ dela
+
+## Endpoints
+### Login:
+\login
+Para o endpoint de Reserva de livro, faltava informar ao servidor o id do usuario,
+e não querendo alterar o layout pré-definido, tomei a liberdade de incluir o endpoint de login.
+É um login simples que recebe usuario e senha via POST.
+Para facilitar o teste, evitando ferramentas para teste de API (como o Postman), apenas navegando
+nesse endpoint um formulário é exibido.
+
+### Listagem de livros emprestados:
+/client/{id_client}/books
+Retorna a listagem de livros emprestados ao id_client informado.
+- title_suggest -> titulo do livro
+- rented_status -> status do livro: emprestado / disponível
+- rented_date -> data que o livro foi emprestado
+- penalty_rule -> regra para multa por atraso na entrega
+- rented_to -> id do usuario que está com o livro
+
+### Reserva de Livro:
+/books/{id_book}/reserve
+Faz a reserva do livro com id recebido para o usuário logado.
+Após a reserva, retorna a listagem dos livros que estão emprestados
+
+
+### Listagem de livros:
+/books
+Retorna a listagem de todos os livros existentes no banco
